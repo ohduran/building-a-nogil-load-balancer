@@ -28,18 +28,21 @@ def server(port: int):
         print("\nServer was disconnected")
 
 def handle(conn: socket.socket, port: int, addr: str):
-    with conn:
-        while True:  # Accept multiple requests per conn 
-            data = conn.recv(1024)
-            if not data: 
-                print(
-                    "Closed server connection "
-                    f"on port {port} from addr {addr}"
-                )
-                break
-            request = int(data.decode())
-            response = str(fibonacci(request)).encode() 
-            conn.send(response + b'\n')
+    try:
+        with conn:
+            while True:  # Accept multiple requests per conn 
+                data = conn.recv(1024)
+                if not data: 
+                    print(
+                        "Closed server connection "
+                        f"on port {port} from addr {addr}"
+                    )
+                    break
+                request = int(data.decode())
+                response = str(fibonacci(request)).encode() 
+                conn.send(response + b'\n')
+    except BaseException:
+        print("Connection was closed by peer")
 
 if __name__ == "__main__":
     server(int(sys.argv[1]))
